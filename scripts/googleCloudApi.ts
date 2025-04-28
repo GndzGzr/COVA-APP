@@ -1,7 +1,7 @@
 import { Platform } from 'react-native';
 
-// API base URL - Updated with the provided endpoint
-const API_BASE_URL = 'https://dc1ea3198032d4f148b231b4e46ef6846.clg07azjl.paperspacegradient.com/';
+// API base URL for Google Cloud
+const API_BASE_URL = 'https://cova-vlm-cpu-1043776497444.us-central1.run.app';
 
 /**
  * Converts an image to a format suitable for API requests
@@ -73,22 +73,62 @@ export async function getATMPrediction(imageUri: string): Promise<any> {
 }
 
 /**
- * Sends an image to the obstacle detection endpoint
+ * Sends an image to the VLM prediction endpoint
  * @param imageUri URI of the image to be processed
- * @returns A promise that resolves to the obstacle detection result
+ * @param question The question to ask about the image
+ * @returns A promise that resolves to the VLM prediction result
  */
-export async function getObstacleDetection(imageUri: string): Promise<any> {
+export async function getVLMPrediction(imageUri: string, question: string): Promise<any> {
   try {
     const imageBytes = await getImageBytes(imageUri);
     
-    const response = await fetch(`${API_BASE_URL}/WApredict`, {
+    const response = await fetch(`${API_BASE_URL}/VLMpredict`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         image_bytes: imageBytes,
+        question: question,
       }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error in VLM prediction:', error);
+    throw error;
+  }
+}
+
+/**
+ * Sends an image to the obstacle detection endpoint with custom question
+ * @param imageUri URI of the image to be processed
+ * @param question Optional question to ask about the image
+ * @returns A promise that resolves to the obstacle detection result
+ */
+export async function getObstacleDetection(imageUri: string, question?: string): Promise<any> {
+  try {
+    const imageBytes = await getImageBytes(imageUri);
+    
+    const body: any = {
+      image_bytes: imageBytes,
+    };
+    
+    // Add question if provided
+    if (question) {
+      body.question = question;
+    }
+    
+    const response = await fetch(`${API_BASE_URL}/WApredict`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
     });
 
     if (!response.ok) {

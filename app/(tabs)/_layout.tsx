@@ -47,6 +47,20 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="camera.fill" color={color} />,
         }}
       />
+      <Tabs.Screen
+        name="cloud-api-test"
+        options={{
+          title: 'Cloud AI',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="cloud.fill" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="gpu-api-test"
+        options={{
+          title: 'GPU AI',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="bolt.fill" color={color} />,
+        }}
+      />
     </Tabs>
   );
 }
